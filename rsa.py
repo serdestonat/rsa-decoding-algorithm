@@ -1,9 +1,8 @@
-# Python for RSA asymmetric cryptographic algorithm.
-# For demonstration, values are
-# relatively small compared to practical application
 import math
-import random
- 
+import time
+
+# gcd hesaplama
+
 def gcd(a, h):
     temp = 0
     while(1):
@@ -12,41 +11,57 @@ def gcd(a, h):
             return h
         a = h
         h = temp
- 
- 
-p = 13
-q = 17
-n = p*q
-e = 2
-phi = (p-1)*(q-1)
- 
-while (e < phi):
- 
-    # e must be co-prime to phi and
-    # smaller than phi.
-    if(gcd(e, phi) == 1):
-        break
-    else:
-        e = e+1
- 
-# Private key (d stands for decrypt)
-# choosing d such that it satisfies
-# d*e = 1 + k * totient (Euler's)
- 
-k = 2
-d = (1 + (k*phi))/e
- 
-# Message to be encrypted
-msg = 99.0
- 
-print("Message data = ", msg)
- 
-# Encryption c = (msg ^ e) % n
-c = pow(msg, e)
-c = math.fmod(c, n)
-print("Encrypted data = ", c)
- 
-# Decryption m = (c ^ d) % n
-m = pow(c, d)
-m = math.fmod(m, n)
-print("Original Message Sent = ", m)
+
+p = int(input("p = "))
+q = int(input("q = "))
+n = p * q
+e = int(input("e = "))
+phi = (p - 1) * (q - 1)
+
+print("n = ", n)
+print("phi = ", phi)
+
+while gcd(e, phi) != 1:
+    e += 1
+
+# e değeri excel değerinde verildiği için elimizde olan
+# e değerinden hareketle "d*e = 1 mod phi" olacak şekilde d hesaplıyoruz
+
+start_time = time.perf_counter() * 1000  # süre başlangıcı
+
+d = pow(e, -1, phi)
+print("d = ", d)
+
+end_time = time.perf_counter() * 1000  # süre bitişi
+total_time = end_time - start_time  # süre hesabı 
+
+print("Gizli Anahtar Oluşturma Süresi : ", total_time, "Milisaniye")  # süre yazdırılması
+
+# yukarıda verilen süre hesaplarını aşağıda metin şifrelerken ve deşifrelerken de kullanacağız.
+
+# d hesaplama 
+
+# Şifrelenecek Mesaj
+msg = int(input("Şifrelenecek Mesaj = "))
+
+start_time = time.perf_counter() * 1000
+
+# Şifreleme c = (msg ^ e) % n
+c = pow(msg, e, n)
+print("Şifrelenmiş Mesaj =", c)
+
+end_time = time.perf_counter() * 1000
+total_time = end_time - start_time
+
+print("Şifreleme Süresi : ", total_time, "Milisaniye")
+
+start_time = time.perf_counter() * 1000
+
+# Deşifreleme m = (c ^ d) % n
+m = pow(c, d, n)
+print("Gönderilmiş Orijinal Mesaj = ", m)
+
+end_time = time.perf_counter() * 1000
+total_time = end_time - start_time
+
+print("Deşifreleme Süresi : ", total_time, "Milisaniye")
